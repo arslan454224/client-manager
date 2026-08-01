@@ -21,12 +21,5 @@ def main():
 		else:
 			print('Неизвестная программа')
 
-
-
-
-
-
-
-
 if __name__ == '__main__':
 	main()
