@@ -11,6 +11,10 @@ def add_client(name, number):
 	if not number:
 		raise ValueError('Number cannot be empty')
 
+	for existing_client in clients:
+		if existing_client['number'] == number:
+			raise ValueError(f'клиент с таким номером {number}, уже был добавлен')
+
 	client = {
 		'name': name,
 		'number': number,
