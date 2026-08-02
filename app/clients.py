@@ -40,6 +40,20 @@ def find_client(name):
 def get_clients():
 	return  clients
 
+def update_client_status(name, status):
+	client = find_client(name)
+
+	if client is None:
+		raise ValueError("клиент не найден")
+	else:
+		client['status'] = status
+
+	return client
+
+
+
+
+
 
 
 

@@ -1,4 +1,4 @@
-from app.clients import add_client, find_client, get_clients
+from app.clients import add_client, find_client, get_clients, update_client_status
 
 
 def main():
@@ -6,6 +6,7 @@ def main():
 		print(f'\nвыбери 1 для того, чтобы добавить клиента')
 		print(f'выбери 2 для того, чтобы показать клиента')
 		print(f'выбери 3, чтобы показать всех клиентов')
+		print(f'выбери 4 для изменения статуса')
 		print(f'выебир 0, чтобы выйти')
 
 		choice = (input()).strip()
@@ -22,7 +23,7 @@ def main():
 				print(error)
 
 		elif choice == '2':
-			name = input('Напиши имя клиента, которого хочешь найти: ')
+			name = input('Напиши имя клиента, которого хочешь найти: ').strip()
 
 			try:
 				client_show = find_client(name)
@@ -46,6 +47,15 @@ def main():
 					    f"{client["number"]}, "
 					    f"{client["status"]}"
 					)
+		elif choice == '4':
+			name = input('введите имя:').strip()
+			status = (input('введите новый статус: new, in_progress, completed, cancelled ')).strip()
+			try:
+				status_of_client = update_client_status(name, status)
+			except ValueError as error:
+				print(error)
+			else:
+				print(f'обновили статус {status_of_client}')
 
 		elif choice == '0':
 			print('Программа завершилась')
