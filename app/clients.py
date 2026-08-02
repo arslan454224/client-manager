@@ -33,7 +33,7 @@ def find_client(name):
 
 	return None
 
-def get_client():
+def get_clients():
 	return  clients
 
 

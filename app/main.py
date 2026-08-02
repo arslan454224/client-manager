@@ -1,4 +1,4 @@
-from app.clients import add_client, find_client, get_client
+from app.clients import add_client, find_client, get_clients
 
 
 def main():
@@ -11,32 +11,40 @@ def main():
 		choice = (input()).strip()
 
 		if choice == '1':
+
 			name = input('Введите имя: ').strip()
 			number = (input('Введите номер: ').strip())
 
-			client = add_client(name, number)
-			print(f'{client}, клиент успешно добавлен, его номер {number}')
+			try:
+				client = add_client(name, number)
+				print(f'{client}, клиент успешно добавлен, его номер {number}')
+			except ValueError as error:
+				print(error)
 
 		elif choice == '2':
 			name = input('Напиши имя клиента, которого хочешь найти: ')
-			client_show = find_client(name)
 
-			if client_show is None:
-				print('Клиент не найден')
+			try:
+				client_show = find_client(name)
+			except ValueError as error:
+				print(error)
 			else:
-				print(f'клиент найден {client_show}')
+				if client_show is None:
+					print('Клиент не найден')
+				else:
+					print(f'клиент найден {client_show}')
 
 		elif choice == '3':
-			all_clients = get_client()
+			all_clients = get_clients()
 
 			if not all_clients:
 				print(f'пустой списко')
 			else:
 				for client in all_clients:
 					print(
-						f'{client['name']}'
-					    f'{client["number"]}'
-					    f'{client["status"]}'
+						f"{client['name']}, "
+					    f"{client["number"]}, "
+					    f"{client["status"]}"
 					)
 
 		elif choice == '0':
