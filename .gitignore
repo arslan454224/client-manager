@@ -2,3 +2,8 @@
 __pycache__/
 *.pyc
 .idea/
+
+#Secrets
+.env
+.env.*
+!.env.example
