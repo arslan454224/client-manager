@@ -1,4 +1,5 @@
 clients = []
+ALLOWED_STATUSES = ('new', 'in_progress', 'completed', 'cancelled')
 
 def add_client(name, number):
 	name = name.strip()
@@ -21,7 +22,6 @@ def add_client(name, number):
 		'status': 'new'
 	}
 
-
 	clients.append(client)
 	return client
 
@@ -42,11 +42,14 @@ def get_clients():
 
 def update_client_status(name, status):
 	client = find_client(name)
+	if status not in ALLOWED_STATUSES:
+		raise ValueError('Неверный статус')
 
+	status = status.strip().lower()
 	if client is None:
 		raise ValueError("клиент не найден")
-	else:
-		client['status'] = status
+
+	client['status'] = status
 
 	return client
 
