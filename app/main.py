@@ -1,6 +1,5 @@
 from app.clients import add_client, find_client, get_clients, update_client_status
 
-
 def main():
 	while True:
 		print(f'\nвыбери 1 для того, чтобы добавить клиента')

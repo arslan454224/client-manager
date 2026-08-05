@@ -1,4 +1,6 @@
-clients = []
+from app.storage import load_clients, save_clients
+
+clients = load_clients()
 ALLOWED_STATUSES = ('new', 'in_progress', 'completed', 'cancelled')
 
 def add_client(name, number):
@@ -23,6 +25,7 @@ def add_client(name, number):
 	}
 
 	clients.append(client)
+	save_clients(clients)
 	return client
 
 def find_client(name):
@@ -50,7 +53,7 @@ def update_client_status(name, status):
 		raise ValueError("клиент не найден")
 
 	client['status'] = status
-
+	save_clients(clients)
 	return client
 
 
