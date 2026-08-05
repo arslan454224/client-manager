@@ -22,8 +22,12 @@ def load_clients():
     if not CLIENTS_FILE.exists():
         return []
 
-    with CLIENTS_FILE.open("r", encoding="utf-8") as file:
-        return json.load(file)
+    try:
+        with CLIENTS_FILE.open("r", encoding="utf-8") as file:
+            return json.load(file)
+    except json.JSONDecodeError as error:
+        raise RuntimeError("Файл clients.json повреждён") from error
+
 
 
 
