@@ -25,9 +25,6 @@ def load_clients():
     with CLIENTS_FILE.open("r", encoding="utf-8") as file:
         return json.load(file)
 
-if __name__ == "__main__":
-    clients_loaded = load_clients()
-    print(clients_loaded)
 
 
 
