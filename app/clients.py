@@ -70,3 +70,19 @@ def filter_clients_by_status(status):
     result = [client for client in clients if client['status'] == status]
     return result
 
+def get_used_statuses():
+    statuses = {client['status'] for client in clients}
+    return statuses
+
+def get_clients_name_by_number():
+    clients_names = {client['number']: client['name'] for client in clients}
+    return clients_names
+
+def search_clients(query):
+    query = query.strip().lower()
+
+    if not query:
+        raise ValueError('Ничего не найдено')
+
+    result = [client for client in clients if query in client['name'].lower() or query in client['number']]
+    return result

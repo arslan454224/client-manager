@@ -1,11 +1,12 @@
-from app.clients import add_client, find_client, get_clients, update_client_status, filter_clients_by_status
+from app.clients import add_client, get_clients, update_client_status, filter_clients_by_status
+from app.clients import search_clients
 from app.storage import export_clients_csv
 
 
 def main():
     while True:
         print(f'\nвыбери 1 для того, чтобы добавить клиента')
-        print(f'выбери 2 для того, чтобы показать клиента')
+        print(f'выбери 2 для того, чтобы показать клиентов')
         print(f'выбери 3, чтобы показать всех клиентов')
         print(f'выбери 4 для изменения статуса')
         print(f'выбери 5, для експорта клиентов в CSV')
@@ -25,17 +26,18 @@ def main():
                 print(error)
 
         elif choice == '2':
-            name = input('Напиши имя клиента, которого хочешь найти: ').strip()
-
+            query = input('Напиши имя клиента,часть имени или номер которого хочешь найти: ').strip()
             try:
-                client_show = find_client(name)
+                found_clients = search_clients(query)
             except ValueError as error:
                 print(error)
             else:
-                if client_show is None:
-                    print('Клиент не найден')
-                else:
-                    print(f'клиент найден {client_show}')
+                if not found_clients:
+                    print('клиент не найден')
+                    continue
+
+                for client in found_clients:
+                    print(f'{client["name"]}, {client["number"]}, {client["status"]}')
 
         elif choice == '3':
             all_clients = get_clients()
