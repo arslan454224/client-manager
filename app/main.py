@@ -1,6 +1,7 @@
 from app.clients import add_client, get_clients, update_client_status, filter_clients_by_status
 from app.clients import search_clients
 from app.storage import export_clients_csv
+from app.applications import add_application
 
 
 def main():
@@ -10,7 +11,8 @@ def main():
         print(f'выбери 3, чтобы показать всех клиентов')
         print(f'выбери 4 для изменения статуса')
         print(f'выбери 5, для експорта клиентов в CSV')
-        print(f'выберо 6 для фильтрации клиента по статусу')
+        print(f'выбери 6 для фильтрации клиента по статусу')
+        print(f'выбери 7 для добавления заявки')
         print(f'выбери 0, чтобы выйти')
 
         choice = (input()).strip()
@@ -85,6 +87,17 @@ def main():
                     continue
                 for client in filtered_clients:
                     print(client['name'], client['status'])
+
+        elif choice == '7':
+            client_number = input('Введите номер клиента: ').strip()
+            description_application = input('Введите заявку: ').strip()
+
+            try:
+                new_application = add_application(client_number, description_application)
+            except ValueError as error:
+                print(error)
+            else:
+                print(f'{new_application}, заявка клиента')
 
         elif choice == '0':
             print('Программа завершилась')

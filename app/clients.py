@@ -86,3 +86,14 @@ def search_clients(query):
 
     result = [client for client in clients if query in client['name'].lower() or query in client['number']]
     return result
+
+def find_client_by_number(number):
+    number = number.strip()
+
+    if not number:
+        raise ValueError('Number cannot be empty')
+
+    for client in clients:
+        if client['number'] == number:
+            return client
+    return None
