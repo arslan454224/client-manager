@@ -15,8 +15,8 @@ def add_application(client_number, description):
     if not description:
         raise ValueError('Нету описания ')
 
-    application_id = len(applications) + 1
-    application_id = int(application_id)
+    application_ids = (application['id'] for application in applications)
+    application_id = max(application_ids, default=0) + 1
 
     new_application = {
         'id': application_id,
@@ -51,5 +51,25 @@ def update_application_status(application_id, status):
 
     application['status'] = status
     save_applications(applications)
+    return application
+
+def filter_applications_by_status(status):
+    status = status.strip().lower()
+
+    if status not in ALLOWED_APPLICATION_STATUSES:
+        raise ValueError('Статуса нет в списке')
+
+    filtered_applications = [application for application in applications if application['status'] == status]
+    return filtered_applications
+
+def delete_application(application_id):
+    application = find_application_by_id(application_id)
+
+    if application is None:
+        raise ValueError('Заявка не найдена')
+
+    applications.remove(application)
+    save_applications(applications)
+
     return application
 

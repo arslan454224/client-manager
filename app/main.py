@@ -1,7 +1,7 @@
 from app.clients import add_client, get_clients, update_client_status, filter_clients_by_status
 from app.clients import search_clients
 from app.storage import export_clients_csv
-from app.applications import add_application, get_applications, find_application_by_id, update_application_status
+from app.applications import add_application, get_applications, find_application_by_id, update_application_status, filter_applications_by_status, delete_application
 
 
 def main():
@@ -15,7 +15,9 @@ def main():
         print(f'выбери 7 для добавления заявки')
         print(f'выбери 8, чтобы показать все заявки')
         print(f'выбери 9, чтобы найти заявку по id')
-        print(f'выбеори 10, чтобы изменить статус заявки')
+        print(f'выбери 10, чтобы изменить статус заявки')
+        print(f'выбери 11 для фильтрации статуса заявки')
+        print(f'выбери 12 для удаления заявки')
         print(f'выбери 0, чтобы выйти')
 
         choice = (input()).strip()
@@ -151,6 +153,35 @@ def main():
                 print(error)
             else:
                 print(application_new_status)
+
+        elif choice == '11':
+            user_status = input('Введите ваш статус: new, in_progress, completed, cancelled ')
+            try:
+                filtered_status = filter_applications_by_status(user_status)
+            except ValueError as error:
+                print(error)
+            else:
+                if not filtered_status:
+                    print('Заявок с таким статусом не найдено')
+                    continue
+                for application in filtered_status:
+                    print(application)
+
+        elif choice == '12':
+            user_input = input('Введите id заявки: ')
+            try:
+                user_input_id = int(user_input)
+            except ValueError:
+                print('Не правильно введен id')
+                continue
+
+            try:
+                deleted_application = delete_application(user_input_id)
+            except ValueError as error:
+                print(error)
+            else:
+                print(deleted_application)
+
 
         elif choice == '0':
             print('Программа завершилась')
