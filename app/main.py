@@ -3,185 +3,236 @@ from app.clients import search_clients
 from app.storage import export_clients_csv
 from app.applications import add_application, get_applications, find_application_by_id, update_application_status, filter_applications_by_status, delete_application
 
+def show_menu():
+    print('\nвыбери 1 для того, чтобы добавить клиента')
+    print('выбери 2 для того, чтобы показать клиента')
+    print('выбери 3, чтобы показать всех клиентов')
+    print('выбери 4 для изменения статуса')
+    print('выбери 5, для експорта клиентов в CSV')
+    print('выбери 6 для фильтрации клиента по статусу')
+    print('выбери 7 для добавления заявки')
+    print('выбери 8, чтобы показать все заявки')
+    print('выбери 9, чтобы найти заявку по id')
+    print('выбери 10, чтобы изменить статус заявки')
+    print('выбери 11 для фильтрации статуса заявки')
+    print('выбери 12 для удаления заявки')
+    print('выбери 0, чтобы выйти')
+
+
+def handle_add_client():
+    name = input('Введите имя: ').strip()
+    number = input('Введите номер: ').strip()
+
+    try:
+        client = add_client(name, number)
+    except ValueError as error:
+        print(error)
+    else:
+        print(f'{client}, клиент успешно добавлен, его номер {number}')
+
+
+def handle_search_clients():
+    query = input('Напиши имя клиента,часть имени или номер которого хочешь найти: ').strip()
+    try:
+        found_clients = search_clients(query)
+    except ValueError as error:
+        print(error)
+    else:
+        if not found_clients:
+            print('клиент не найден')
+            return
+
+        for client in found_clients:
+            print(f'{client["name"]}, {client["number"]}, {client["status"]}')
+
+
+def handle_show_clients():
+    all_clients = get_clients()
+
+    if not all_clients:
+        print('пустой списко')
+        return
+    for client in all_clients:
+        print(f'{client["name"]}, '
+              f'{client["number"]}, '
+              f'{client["status"]}')
+
+
+def handle_update_client_status():
+    name = input('введите имя:').strip()
+    status = (input('введите новый статус: new, in_progress, completed, cancelled ')).strip()
+
+    try:
+        status_of_client = update_client_status(name, status)
+    except ValueError as error:
+        print(error)
+    else:
+        print(f'обновили статус {status_of_client}')
+
+
+def handle_export_clients_csv():
+    all_clients = get_clients()
+
+    if not all_clients:
+        print('Пустой список')
+        return
+
+    export_clients_csv(all_clients)
+    print('Клиенты экспортированы в CSV')
+
+
+def handle_filter_clients_by_status():
+    client_status = input("Введите ваш статут: 'new', 'in_progress', 'completed', 'cancelled' ")
+
+    try:
+        filtered_clients = filter_clients_by_status(client_status)
+    except ValueError as error:
+        print(error)
+    else:
+        if not filtered_clients:
+            print('Пустой список')
+            return
+        for client in filtered_clients:
+            print(client['name'], client['status'])
+
+
+def handle_add_application():
+    client_number = input('Введите номер клиента: ').strip()
+    description_application = input('Введите заявку: ').strip()
+
+    try:
+        new_application = add_application(client_number, description_application)
+    except ValueError as error:
+        print(error)
+    else:
+        print(f'{new_application}, заявка клиента')
+
+
+def handle_show_applications():
+    all_applications = get_applications()
+    if not all_applications:
+        print('Пусто, нет заявок')
+        return
+
+    for application in all_applications:
+        print(f'{application["id"]}, '
+              f'{application["client_number"]}, '
+              f'{application["description"]}, '
+              f' {application["status"]}')
+
+
+def handle_find_application_by_id():
+    user_input_id = input('Введите id: ')
+
+    try:
+        user_input_id = int(user_input_id)
+    except ValueError:
+        print(f'{user_input_id}, не число, напишите правильное id')
+        return
+
+    found_application = find_application_by_id(user_input_id)
+
+    if found_application is None:
+        print('id не найдено')
+        return
+
+    print(f'{found_application["description"]}, ')
+
+
+def handle_update_application_status():
+    user_input_id = input('Введите id заявки: ')
+    try:
+        user_input_id = int(user_input_id)
+    except ValueError:
+        print('введите правильное id')
+        return
+
+    found_application = find_application_by_id(user_input_id)
+    if found_application is None:
+        print('Нету такого id')
+        return
+
+    new_status = input('введите новый статус: new, in_progress, completed, cancelled ')
+
+    try:
+        application_new_status = update_application_status(user_input_id, new_status)
+    except ValueError as error:
+        print(error)
+    else:
+        print(application_new_status)
+
+
+def handle_filter_applications_by_status():
+    user_status = input('Введите ваш статус: new, in_progress, completed, cancelled ')
+    try:
+        filtered_status = filter_applications_by_status(user_status)
+    except ValueError as error:
+        print(error)
+    else:
+        if not filtered_status:
+            print('Заявок с таким статусом не найдено')
+            return
+        for application in filtered_status:
+            print(application)
+
+
+def handle_delete_application():
+    user_input = input('Введите id заявки: ')
+    try:
+        user_input_id = int(user_input)
+    except ValueError:
+        print('Не правильно введен id')
+        return
+
+    try:
+        deleted_application = delete_application(user_input_id)
+    except ValueError as error:
+        print(error)
+    else:
+        print(deleted_application)
+
 
 def main():
     while True:
-        print(f'\nвыбери 1 для того, чтобы добавить клиента')
-        print(f'выбери 2 для того, чтобы показать клиента')
-        print(f'выбери 3, чтобы показать всех клиентов')
-        print(f'выбери 4 для изменения статуса')
-        print(f'выбери 5, для експорта клиентов в CSV')
-        print(f'выбери 6 для фильтрации клиента по статусу')
-        print(f'выбери 7 для добавления заявки')
-        print(f'выбери 8, чтобы показать все заявки')
-        print(f'выбери 9, чтобы найти заявку по id')
-        print(f'выбери 10, чтобы изменить статус заявки')
-        print(f'выбери 11 для фильтрации статуса заявки')
-        print(f'выбери 12 для удаления заявки')
-        print(f'выбери 0, чтобы выйти')
+        show_menu()
 
-        choice = (input()).strip()
+        choice = input().strip()
 
         if choice == '1':
-            name = input('Введите имя: ').strip()
-            number = (input('Введите номер: ').strip())
-
-            try:
-                client = add_client(name, number)
-                print(f'{client}, клиент успешно добавлен, его номер {number}')
-            except ValueError as error:
-                print(error)
+            handle_add_client()
 
         elif choice == '2':
-            query = input('Напиши имя клиента,часть имени или номер которого хочешь найти: ').strip()
-            try:
-                found_clients = search_clients(query)
-            except ValueError as error:
-                print(error)
-            else:
-                if not found_clients:
-                    print('клиент не найден')
-                    continue
-
-                for client in found_clients:
-                    print(f'{client["name"]}, {client["number"]}, {client["status"]}')
+            handle_search_clients()
 
         elif choice == '3':
-            all_clients = get_clients()
-
-            if not all_clients:
-                print(f'пустой списко')
-                continue
-            for client in all_clients:
-                print(f'{client["name"]}, '
-                      f'{client["number"]}, '
-                      f'{client["status"]}')
+            handle_show_clients()
 
         elif choice == '4':
-            name = input('введите имя:').strip()
-            status = (input('введите новый статус: new, in_progress, completed, cancelled ')).strip()
-
-            try:
-                status_of_client = update_client_status(name, status)
-            except ValueError as error:
-                print(error)
-            else:
-                print(f'обновили статус {status_of_client}')
+            handle_update_client_status()
 
         elif choice == '5':
-            all_clients = get_clients()
-
-            if not all_clients:
-                print('Пустой список')
-                continue
-
-            export_clients_csv(all_clients)
-            print('Клиенты экспортированы в CSV')
+            handle_export_clients_csv()
 
         elif choice == '6':
-            client_status = input("Введите ваш статут: 'new', 'in_progress', 'completed', 'cancelled' ")
-
-            try:
-                filtered_clients = filter_clients_by_status(client_status)
-            except ValueError as error:
-                print(error)
-            else:
-                if not filtered_clients:
-                    print('Пустой список')
-                    continue
-                for client in filtered_clients:
-                    print(client['name'], client['status'])
+            handle_filter_clients_by_status()
 
         elif choice == '7':
-            client_number = input('Введите номер клиента: ').strip()
-            description_application = input('Введите заявку: ').strip()
-
-            try:
-                new_application = add_application(client_number, description_application)
-            except ValueError as error:
-                print(error)
-            else:
-                print(f'{new_application}, заявка клиента')
+            handle_add_application()
 
         elif choice == '8':
-            all_applications = get_applications()
-            if not all_applications:
-                print('Пусто, нет заявок')
-                continue
-
-            for application in all_applications:
-                print(f'{application["id"]}, '
-                      f'{application["client_number"]}, '
-                      f'{application["description"]}, '
-                      f' {application["status"]}')
+            handle_show_applications()
 
         elif choice == '9':
-            user_input_id = input('Введите id: ')
-
-            try:
-                user_input_id = int(user_input_id)
-            except ValueError:
-                print(f'{user_input_id}, не число, напишите правильное id')
-                continue
-
-            found_application = find_application_by_id(user_input_id)
-
-            if found_application is None:
-                print('id не найдено')
-                continue
-
-            print(f'{found_application["description"]}, ')
+            handle_find_application_by_id()
 
         elif choice == '10':
-            user_input_id = input('Введите id заявки: ')
-            try:
-                user_input_id = int(user_input_id)
-            except ValueError:
-                print('введите правильное id')
-                continue
-
-            found_application = find_application_by_id(user_input_id)
-            if found_application is None:
-                print('Нету такого id')
-                continue
-
-            new_status = input('введите новый статус: new, in_progress, completed, cancelled ')
-
-            try:
-                application_new_status = update_application_status(user_input_id, new_status)
-            except ValueError as error:
-                print(error)
-            else:
-                print(application_new_status)
+            handle_update_application_status()
 
         elif choice == '11':
-            user_status = input('Введите ваш статус: new, in_progress, completed, cancelled ')
-            try:
-                filtered_status = filter_applications_by_status(user_status)
-            except ValueError as error:
-                print(error)
-            else:
-                if not filtered_status:
-                    print('Заявок с таким статусом не найдено')
-                    continue
-                for application in filtered_status:
-                    print(application)
+            handle_filter_applications_by_status()
 
         elif choice == '12':
-            user_input = input('Введите id заявки: ')
-            try:
-                user_input_id = int(user_input)
-            except ValueError:
-                print('Не правильно введен id')
-                continue
-
-            try:
-                deleted_application = delete_application(user_input_id)
-            except ValueError as error:
-                print(error)
-            else:
-                print(deleted_application)
-
+            handle_delete_application()
 
         elif choice == '0':
             print('Программа завершилась')
@@ -189,7 +240,6 @@ def main():
 
         else:
             print('Неизвестная программа')
-
 
 if __name__ == '__main__':
     main()
