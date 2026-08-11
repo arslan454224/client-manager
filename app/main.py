@@ -191,55 +191,37 @@ def handle_delete_application():
     else:
         print(deleted_application)
 
+COMMAND_HANDLERS = {
+    '1': handle_add_client,
+    '2': handle_search_clients,
+    '3': handle_show_clients,
+    '4': handle_update_client_status,
+    '5': handle_export_clients_csv,
+    '6': handle_filter_clients_by_status,
+    '7': handle_add_application,
+    '8': handle_show_applications,
+    '9': handle_find_application_by_id,
+    '10': handle_update_application_status,
+    '11': handle_filter_applications_by_status,
+    '12': handle_delete_application
+}
+
 
 def main():
     while True:
         show_menu()
 
         choice = input().strip()
-
-        if choice == '1':
-            handle_add_client()
-
-        elif choice == '2':
-            handle_search_clients()
-
-        elif choice == '3':
-            handle_show_clients()
-
-        elif choice == '4':
-            handle_update_client_status()
-
-        elif choice == '5':
-            handle_export_clients_csv()
-
-        elif choice == '6':
-            handle_filter_clients_by_status()
-
-        elif choice == '7':
-            handle_add_application()
-
-        elif choice == '8':
-            handle_show_applications()
-
-        elif choice == '9':
-            handle_find_application_by_id()
-
-        elif choice == '10':
-            handle_update_application_status()
-
-        elif choice == '11':
-            handle_filter_applications_by_status()
-
-        elif choice == '12':
-            handle_delete_application()
-
-        elif choice == '0':
-            print('Программа завершилась')
+        if choice == '0':
             break
 
-        else:
-            print('Неизвестная программа')
+        handler = COMMAND_HANDLERS.get(choice)
+
+        if handler is None:
+            print('Неверная команда')
+            continue
+
+        handler()
 
 if __name__ == '__main__':
     main()
