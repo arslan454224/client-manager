@@ -2,21 +2,22 @@ from app.clients import add_client, get_clients, update_client_status, filter_cl
 from app.clients import search_clients
 from app.storage import export_clients_csv
 from app.applications import add_application, get_applications, find_application_by_id, update_application_status, filter_applications_by_status, delete_application
+from app.database import init_database
 
 def show_menu():
-    print('\nвыбери 1 для того, чтобы добавить клиента')
-    print('выбери 2 для того, чтобы показать клиента')
-    print('выбери 3, чтобы показать всех клиентов')
-    print('выбери 4 для изменения статуса')
-    print('выбери 5, для експорта клиентов в CSV')
-    print('выбери 6 для фильтрации клиента по статусу')
-    print('выбери 7 для добавления заявки')
-    print('выбери 8, чтобы показать все заявки')
-    print('выбери 9, чтобы найти заявку по id')
-    print('выбери 10, чтобы изменить статус заявки')
-    print('выбери 11 для фильтрации статуса заявки')
-    print('выбери 12 для удаления заявки')
-    print('выбери 0, чтобы выйти')
+    print('\nВыбери 1, чтобы добавить клиента')
+    print('Выбери 2, чтобы найти клиента')
+    print('Выбери 3, чтобы показать всех клиентов')
+    print('Выбери 4, чтобы изменить статус клиента')
+    print('Выбери 5, чтобы экспортировать клиентов в CSV')
+    print('Выбери 6, чтобы отфильтровать клиентов по статусу')
+    print('Выбери 7, чтобы добавить заявку')
+    print('Выбери 8, чтобы показать все заявки')
+    print('Выбери 9, чтобы найти заявку по ID')
+    print('Выбери 10, чтобы изменить статус заявки')
+    print('Выбери 11, чтобы отфильтровать заявки по статусу')
+    print('Выбери 12, чтобы удалить заявку')
+    print('Выбери 0, чтобы выйти')
 
 
 def handle_add_client():
@@ -208,6 +209,7 @@ COMMAND_HANDLERS = {
 
 
 def main():
+    init_database()
     while True:
         show_menu()
 

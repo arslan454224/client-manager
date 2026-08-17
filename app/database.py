@@ -68,6 +68,8 @@ def add_client_to_database(name, number):
     finally:
         connection.close()
 
+    return find_client_by_number_from_database(number)
+
 
 def get_clients_from_database():
     connection = get_connection()
@@ -350,6 +352,62 @@ def delete_application_from_database(application_id):
         connection.close()
 
     return application
+
+def find_client_by_name_from_database(name):
+    name = name.strip()
+    if not name:
+        raise ValueError('Имя не может быть пустым')
+
+    connection = get_connection()
+    try:
+        cursor = connection.execute(
+            '''
+            SELECT id, name, number, status
+            FROM clients
+            WHERE LOWER(name) = LOWER(?)
+            LIMIT 1''', (name,)
+        )
+        get_result = cursor.fetchone()
+    finally:
+        connection.close()
+    return get_result
+
+
+def filter_clients_by_status_from_database(status):
+    status = status.strip().lower()
+    if status in ALLOWED_STATUSES:
+        raise ValueError('Такой статус не существует')
+
+    connection = get_connection()
+    try:
+        cursor = connection.execute(
+            '''
+            SELECT id, name, number, status
+            FROM clients
+            WHERE status = ?
+            ORDER BY name ASC''', (status,)
+        )
+        get_result = cursor.fetchall()
+    finally:
+        connection.close()
+
+    return get_result
+
+
+def get_used_statuses_from_database():
+    connection = get_connection()
+    try:
+        cursor = connection.execute(
+            '''
+            SELECT DISTINCT status
+            FROM clients
+            ORDER BY status ASC'''
+        )
+        get_result = cursor.fetchall()
+    finally:
+        connection.close()
+
+    return get_result
 
 if __name__ == '__main__':
     init_database()
