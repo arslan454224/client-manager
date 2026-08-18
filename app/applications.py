@@ -1,75 +1,47 @@
-from app.clients import find_client_by_number
-from app.storage import save_applications, load_applications
-
-applications = load_applications()
-ALLOWED_APPLICATION_STATUSES = ('new', 'in_progress', 'completed', 'cancelled')
+from app.database import (
+    add_application_to_database,
+    find_application_by_id_from_database,
+    get_applications_from_database,
+    update_application_status_in_database,
+    filter_applications_by_status_from_database,
+    delete_application_from_database
+)
 
 def add_application(client_number, description):
     client_number = client_number.strip()
     description = description.strip()
 
-    client = find_client_by_number(client_number)
-    if client is None:
-        raise ValueError('Клиент не найден')
+    got_applications = add_application_to_database(client_number, description)
+    find_applications = find_application_by_id_from_database(got_applications)
+    return dict(find_applications)
 
-    if not description:
-        raise ValueError('Нету описания ')
-
-    application_ids = (application['id'] for application in applications)
-    application_id = max(application_ids, default=0) + 1
-
-    new_application = {
-        'id': application_id,
-        'client_number': client_number,
-        'description': description,
-        'status': 'new'
-    }
-
-    applications.append(new_application)
-    save_applications(applications)
-    return new_application
 
 def get_applications():
-    return applications
+    rows = get_applications_from_database()
+    result = [dict(row) for row in rows]
+    return result
+
 
 def find_application_by_id(application_id):
+    application_row = find_application_by_id_from_database(application_id)
+    if application_row is None:
+        return None
 
-    for application in applications:
-        if application['id'] == application_id:
-            return application
+    return dict(application_row)
 
-    return None
 
 def update_application_status(application_id, status):
-    application = find_application_by_id(application_id)
-    if application is None:
-        raise ValueError('Неправильный статус')
+    application_row = update_application_status_in_database(application_id, status)
+    return dict(application_row)
 
-    status = status.strip().lower()
-    if status not in ALLOWED_APPLICATION_STATUSES:
-        raise ValueError('Нету такого статуса')
-
-    application['status'] = status
-    save_applications(applications)
-    return application
 
 def filter_applications_by_status(status):
-    status = status.strip().lower()
+    application_rows = filter_applications_by_status_from_database(status)
+    result = [dict(application_row) for application_row in application_rows]
+    return result
 
-    if status not in ALLOWED_APPLICATION_STATUSES:
-        raise ValueError('Статуса нет в списке')
-
-    filtered_applications = [application for application in applications if application['status'] == status]
-    return filtered_applications
 
 def delete_application(application_id):
-    application = find_application_by_id(application_id)
-
-    if application is None:
-        raise ValueError('Заявка не найдена')
-
-    applications.remove(application)
-    save_applications(applications)
-
-    return application
+    application_row = delete_application_from_database(application_id)
+    return dict(application_row)
 

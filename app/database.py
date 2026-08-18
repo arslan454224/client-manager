@@ -1,5 +1,4 @@
 import sqlite3
-from multiprocessing import connection
 from pathlib import Path
 
 ALLOWED_STATUSES = ('new', 'in_progress', 'completed', 'cancelled')
@@ -263,7 +262,7 @@ def get_applications_from_database():
         cursor = connection.execute(
             '''
             SELECT
-                applications.id AS application_id,
+                applications.id AS id,
                 applications.description,
                 applications.status,
                 clients.name AS client_name,
@@ -289,7 +288,7 @@ def find_application_by_id_from_database(application_id):
     try:
         cursor = connection.execute(
             '''
-            SELECT applications.id AS application_id,
+            SELECT applications.id AS id,
             applications.description,
             applications.status,
             clients.name AS client_name,
@@ -409,6 +408,30 @@ def get_used_statuses_from_database():
 
     return get_result
 
-if __name__ == '__main__':
-    init_database()
-    print('База данных инициализирована')
+
+def filter_applications_by_status_from_database(status):
+    status = status.strip().lower()
+    if status not in ALLOWED_APPLICATION_STATUSES:
+        raise ValueError('Такой статус отсутствует')
+
+    connection = get_connection()
+    try:
+        cursor = connection.execute(
+            '''
+            SELECT applications.id AS id,
+            applications.description,
+            applications.status,
+            clients.name AS client_name,
+            clients.number AS client_number
+            FROM applications
+            JOIN clients
+                ON applications.client_id = clients.id
+            WHERE applications.status = ?
+            ORDER BY applications.id ASC''', (status,)
+        )
+        get_result = cursor.fetchall()
+    finally:
+        connection.close()
+
+    return get_result
+
