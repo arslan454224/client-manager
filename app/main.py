@@ -1,6 +1,6 @@
 from app.clients import add_client, get_clients, update_client_status, filter_clients_by_status
 from app.clients import search_clients
-from app.storage import export_clients_csv
+from app.storage import export_clients_csv, export_applications_csv
 from app.applications import add_application, get_applications, find_application_by_id, update_application_status, filter_applications_by_status, delete_application
 from app.database import init_database
 
@@ -16,7 +16,8 @@ def show_menu():
     print('Выбери 9, чтобы найти заявку по ID')
     print('Выбери 10, чтобы изменить статус заявки')
     print('Выбери 11, чтобы отфильтровать заявки по статусу')
-    print('Выбери 12, чтобы удалить заявку')
+    print('Выбери 12, чтобы создать csv файл с заявками')
+    print('Выбери 13, чтобы удалить заявку')
     print('Выбери 0, чтобы выйти')
 
 
@@ -177,6 +178,16 @@ def handle_filter_applications_by_status():
             print(application)
 
 
+def handle_export_applications_csv():
+    user_status = input('Введите ваш статус: new, in_progress, completed, cancelled ')
+    filtered_applications = filter_applications_by_status(user_status)
+    if not filtered_applications:
+        print('Таких статусов нет')
+        return
+    export_applications_csv(filtered_applications)
+    print('Заявки сохранены')
+
+
 def handle_delete_application():
     user_input = input('Введите id заявки: ')
     try:
@@ -204,7 +215,8 @@ COMMAND_HANDLERS = {
     '9': handle_find_application_by_id,
     '10': handle_update_application_status,
     '11': handle_filter_applications_by_status,
-    '12': handle_delete_application
+    '12': handle_export_applications_csv,
+    '13': handle_delete_application
 }
 
 
