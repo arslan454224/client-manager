@@ -85,5 +85,6 @@ python -m app.main
 - `data/clients.json` — клиенты;
 - `data/applications.json` — заявки;
 - `data/clients.csv` — экспортированный список клиентов.
+- `data/applications.csv` — экспортированный список заявок.
 
 JSON-файлы сохраняют данные между запусками программы.
